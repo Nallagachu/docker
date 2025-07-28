@@ -24,7 +24,7 @@ curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linu
 chmod +x ./kubectl
 mv kubectl /usr/local/bin/kubectl
 
-eksctl create cluster --config-file=eks.yaml
+#eksctl create cluster --config-file=eks.yaml
 # Verify installations
 
 
