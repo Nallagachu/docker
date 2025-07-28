@@ -1,123 +1,150 @@
+# 🚀 Kubernetes EKS Cluster Setup — RoboShop Project
 
-# 🚀 Terraform-Powered EC2 Instance with Docker Preinstalled
+Welcome to the **RoboShop Kubernetes Cluster Setup** guide! This documentation walks you through setting up a fully functional Kubernetes cluster on AWS using **Terraform**, **Docker**, **eksctl**, and **kubectl**.
 
-Easily launch a **Docker-ready EC2 instance** on AWS using Terraform — no complex workflows, just a single command.
-
-This repository simplifies the process of provisioning an Amazon EC2 instance with:
-
-- 🐳 Docker pre-installed
-- 👤 A dedicated non-root user with Docker access (no need for `sudo`)
-- 💾 Extended EBS volume (30 GB) automatically mounted
-- ⚙️ Cloud-init configuration for automated setup
+Whether you're just starting out or need a reliable and repeatable method to deploy Kubernetes, this guide is crafted for ease, clarity, and automation.
 
 ---
 
-## 🔧 Why This Project?
+## 📌 Overview
 
-Spinning up a Docker environment often involves manual steps, scripts, and post-launch configuration. This repo eliminates that friction by automating the entire process.
+This setup is tailored for our project **RoboShop**, a microservices-based application running on Amazon EKS.
 
-Whether you're:
+It covers:
 
-- Testing containers  
-- Deploying a dev environment  
-- Running training demos  
-- Learning infrastructure-as-code (IaC)  
-
-This repo gets you started in **seconds**, not hours.
+* Automating EC2 provisioning with Terraform
+* Setting up Docker and system requirements
+* Installing Kubernetes tooling (eksctl, kubectl, AWS CLI)
+* Creating and managing your EKS cluster
 
 ---
 
-## 📁 What's Inside?
+## 🧰 Prerequisites
 
-✅ **Terraform scripts** to provision:
-- A new EC2 instance (Amazon Linux 2)
-- A 30 GB EBS volume with auto-mount
-- Docker installation on boot
-- A non-root user (e.g., `harga`) with Docker access
+Before you begin, ensure you have:
 
----
-
-## 📦 Requirements
-
-Make sure you have these installed before getting started:
-
-- [Terraform](https://developer.hashicorp.com/terraform/downloads)
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-- An AWS IAM user with EC2 and VPC access permissions
-- SSH key pair for instance access
+* ✅ An AWS account with IAM permissions for EKS and EC2
+* ✅ Terraform installed locally
+* ✅ Git installed
+* ✅ It has be accessed with password
 
 ---
 
-## 🚀 Quick Start
+## 🏗️ Step 1: Provision EC2 with Terraform
 
-### 1. Clone the Repository
+### 🔁 Clone the Repository
+
 ```bash
 git clone https://github.com/Nallagachu/docker.git
 cd docker
-````
+```
 
-### 2. Initialize Terraform
+### ⚙️ Initialize and Apply Terraform
 
 ```bash
 terraform init
-```
-
-### 3. (Optional) Review the Plan
-
-```bash
 terraform plan
-```
-
-### 4. Apply the Configuration
-
-```bash
 terraform apply
 ```
 
-> Approve the plan when prompted.
+Terraform will:
 
----
+* Launch an EC2 instance based on your config
+* Output the public IP of the instance
 
-## 🔐 Access the Instance
+### 🔐 SSH into EC2
 
-Once provisioning is complete:
-
-```bash
-ssh -i <your-key>.pem ec2-user@<public-ip>
-```
-
-Then switch to the custom user:
+Use the IP provided:
 
 ```bash
-su - harga
+password auth
 ```
 
-✅ Docker is ready
-✅ Extra storage mounted
-✅ No root access needed for Docker
+---
+
+## 🐳 Step 2: Install Docker and Setup Environment
+
+Inside your EC2 instance:
+
+```bash
+chmod +x docker.sh
+./docker.sh
+```
+
+This script:
+
+* Installs Docker
+* Mounts volumes for extended disk space (if needed)
 
 ---
 
-## 🧠 What's Configured Automatically?
+## 🔐 Step 3: Configure AWS CLI
 
-* Docker Engine installation via `cloud-init`
-* Dedicated non-root user (`harga`) with Docker group permissions
-* EBS volume expansion to 30 GB and automatic mounting to `/data`
+Configure credentials and default region:
 
-You’re ready to run containers right out of the box.
+```bash
+aws configure
+```
 
----
-
-## 📌 Use Cases
-
-* ⚙️ Local containerized app testing
-* 🧪 DevOps pipeline experiments
-* 📚 Dev environment bootstrapping
-* 🚀 Learn Docker & Terraform workflows
+> ⚠️ Ensure the IAM credentials have permissions for EKS provisioning.
 
 ---
 
-## 🙋 Author’s Note
+## ☸️ Step 4: Create the EKS Cluster
 
-This project is a small initiative to help developers and DevOps learners spin up a Docker-ready AWS environment instantly. Use it, improve it, and share your feedback — let’s grow together!
+Run the following command to create your cluster from the provided config file:
+
+```bash
+eksctl create cluster --config-file=eks.yaml
+```
+
+This will:
+
+* Read configuration from `eks.yaml`
+* Spin up the EKS control plane and worker nodes
+
+🕒 Wait 10–15 minutes for cluster provisioning to complete.
+
+---
+
+## ✅ Step 5: Verify the Cluster
+
+Once the cluster is up, verify node status:
+
+```bash
+kubectl get nodes
+```
+
+Expected output: List of worker nodes in `Ready` status.
+
+---
+
+## 📂 Project Structure
+
+```
+docker/
+├── docker.sh         # Script to install Docker and prepare disk space
+├── eks.yaml          # Cluster configuration for eksctl
+├── main.tf           # Terraform file for provisioning EC2 instance
+```
+
+---
+
+## 💡 Notes & Tips
+
+* Use consistent AWS region settings across AWS CLI, Terraform, and eksctl
+* Validate IAM roles and VPC configuration if EKS provisioning fails
+* Customize `eks.yaml` for cluster size, node groups, and Kubernetes version
+
+---
+
+## 📎 Repository Link
+
+🔗 [https://github.com/Nallagachu/docker](https://github.com/Nallagachu/docker)
+
+Clone, configure, deploy — and contribute if you'd like!
+
+---
+
+
 
