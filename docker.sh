@@ -27,6 +27,8 @@ mv kubectl /usr/local/bin/kubectl
 #eksctl create cluster --config-file=eks.yaml
 # Verify installations
 
-
 eksctl version
 kubectl version
+
+git clone https://github.com/ahmetb/kubectx /opt/kubectx
+ln -s /opt/kubectx/kubens /usr/local/bin/kubens
