@@ -25,6 +25,7 @@ chmod +x ./kubectl
 mv kubectl /usr/local/bin/kubectl
 
 #eksctl create cluster --config-file=eks.yaml
+#eksctl delete cluster --config-file=eks.yaml
 # Verify installations
 
 eksctl version
